@@ -7,13 +7,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Post POJO - represents a blog post in the JSONPlaceholder API.
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LoginRequest {
-    private String email;
-    private String password;
+public class Post {
+    private Integer id;
+    private Integer userId;
+    private String title;
+    private String body;
 }

@@ -4,7 +4,6 @@ package com.piyushsinghal.api.utils;
  * ApiEndpoints - Centralizes all API paths.
  *
  * If a URL changes, it's updated in one place instead of hunting through test files.
- * This is the Page Object pattern applied to REST endpoints.
  */
 public final class ApiEndpoints {
 
@@ -13,14 +12,13 @@ public final class ApiEndpoints {
     }
 
     // User endpoints
-    public static final String USERS = "/api/users";
-    public static final String USER_BY_ID = "/api/users/{id}";
+    public static final String USERS = "/users";
+    public static final String USER_BY_ID = "/users/{id}";
 
-    // Auth endpoints
-    public static final String LOGIN = "/api/login";
-    public static final String REGISTER = "/api/register";
+    // Post endpoints (used for POST/PUT/PATCH/DELETE demos)
+    public static final String POSTS = "/posts";
+    public static final String POST_BY_ID = "/posts/{id}";
 
-    // Resource endpoints
-    public static final String RESOURCES = "/api/unknown";
-    public static final String RESOURCE_BY_ID = "/api/unknown/{id}";
+    // Comments
+    public static final String COMMENTS_BY_POST = "/posts/{id}/comments";
 }

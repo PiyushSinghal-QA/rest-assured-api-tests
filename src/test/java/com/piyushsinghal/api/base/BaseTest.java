@@ -46,7 +46,6 @@ public abstract class BaseTest {
         requestSpec = new RequestSpecBuilder()
                 .setBaseUri(config.getBaseUrl())
                 .setContentType(ContentType.JSON)
-                .addHeader("x-api-key", config.getApiKey())  // ReqRes requires this header
                 .setConfig(restConfig)
                 .addFilter(new AllureRestAssured())  // Auto-captures requests in Allure
                 .build();

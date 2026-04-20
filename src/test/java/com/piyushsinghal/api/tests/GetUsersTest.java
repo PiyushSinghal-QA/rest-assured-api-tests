@@ -2,19 +2,19 @@ package com.piyushsinghal.api.tests;
 
 import com.piyushsinghal.api.base.BaseTest;
 import com.piyushsinghal.api.models.User;
-import com.piyushsinghal.api.models.UserListResponse;
 import com.piyushsinghal.api.utils.ApiEndpoints;
 import com.piyushsinghal.api.utils.TestDataProvider;
 import io.qameta.allure.*;
-import io.restassured.response.Response;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.testng.Assert.*;
 
 /**
- * Tests for GET /users endpoints (list and single user retrieval).
+ * Tests for GET /users endpoints.
  *
  * Demonstrates:
  *   - Status code assertions
@@ -28,25 +28,27 @@ import static org.testng.Assert.*;
 @Feature("Retrieve Users")
 public class GetUsersTest extends BaseTest {
 
-    @Test(description = "GET /users - should return paginated list of users")
-    @Story("List users with pagination")
+    @Test(description = "GET /users - should return list of all users")
+    @Story("List all users")
     @Severity(SeverityLevel.BLOCKER)
-    public void shouldReturnPaginatedUsersList() {
-        UserListResponse response = given()
-                .queryParam("page", 1)
+    public void shouldReturnAllUsers() {
+        User[] users = given()
                 .when()
                 .get(ApiEndpoints.USERS)
                 .then()
                 .statusCode(200)
                 .time(lessThanMillis(2000))
                 .extract()
-                .as(UserListResponse.class);
+                .as(User[].class);
 
-        assertEquals(response.getPage(), 1, "Page number mismatch");
-        assertTrue(response.getPer_page() > 0, "per_page should be positive");
-        assertTrue(response.getTotal() > 0, "total should be positive");
-        assertNotNull(response.getData(), "Users list should not be null");
-        assertFalse(response.getData().isEmpty(), "Users list should not be empty");
+        assertTrue(users.length > 0, "Users list should not be empty");
+        assertEquals(users.length, 10, "JSONPlaceholder should return 10 users");
+
+        // Validate first user has required fields
+        User firstUser = users[0];
+        assertNotNull(firstUser.getId(), "User ID should not be null");
+        assertNotNull(firstUser.getEmail(), "Email should not be null");
+        assertTrue(firstUser.getEmail().contains("@"), "Email should be valid format");
     }
 
     @Test(description = "GET /users/{id} - should return single user by ID")
@@ -55,21 +57,20 @@ public class GetUsersTest extends BaseTest {
     public void shouldReturnSingleUserById() {
         int userId = 2;
 
-        Response response = given()
+        User user = given()
                 .pathParam("id", userId)
                 .when()
                 .get(ApiEndpoints.USER_BY_ID)
                 .then()
                 .statusCode(200)
                 .extract()
-                .response();
+                .as(User.class);
 
-        User user = response.jsonPath().getObject("data", User.class);
         assertEquals(user.getId(), Integer.valueOf(userId), "User ID mismatch");
         assertNotNull(user.getEmail(), "Email should not be null");
         assertTrue(user.getEmail().contains("@"), "Email should be valid format");
-        assertNotNull(user.getFirst_name(), "First name should not be null");
-        assertNotNull(user.getLast_name(), "Last name should not be null");
+        assertNotNull(user.getName(), "Name should not be null");
+        assertNotNull(user.getUsername(), "Username should not be null");
     }
 
     @Test(description = "GET /users/{id} - should validate response against JSON schema")
@@ -99,18 +100,21 @@ public class GetUsersTest extends BaseTest {
                 .statusCode(404);
     }
 
-    @Test(dataProvider = "paginationScenarios", dataProviderClass = TestDataProvider.class,
-          description = "GET /users - should handle different page numbers")
-    @Story("Pagination")
+    @Test(description = "GET /users - should support filtering by query parameter")
+    @Story("Query parameter filtering")
     @Severity(SeverityLevel.NORMAL)
-    public void shouldHandlePagination(int pageNumber, int expectedStatus) {
-        given()
-                .queryParam("page", pageNumber)
+    public void shouldFilterUsersByUsername() {
+        User[] users = given()
+                .queryParam("username", "Bret")
                 .when()
                 .get(ApiEndpoints.USERS)
                 .then()
-                .statusCode(expectedStatus)
-                .body("page", org.hamcrest.Matchers.equalTo(pageNumber));
+                .statusCode(200)
+                .extract()
+                .as(User[].class);
+
+        assertEquals(users.length, 1, "Should find exactly one user with username 'Bret'");
+        assertEquals(users[0].getUsername(), "Bret");
     }
 
     private static org.hamcrest.Matcher<Long> lessThanMillis(long millis) {

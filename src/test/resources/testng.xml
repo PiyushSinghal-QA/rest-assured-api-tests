@@ -7,17 +7,16 @@
         <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
     </listeners>
 
-    <test name="User Management Tests">
+    <test name="User Tests">
         <classes>
             <class name="com.piyushsinghal.api.tests.GetUsersTest"/>
-            <class name="com.piyushsinghal.api.tests.CreateUserTest"/>
-            <class name="com.piyushsinghal.api.tests.UpdateDeleteUserTest"/>
         </classes>
     </test>
 
-    <test name="Authentication Tests">
+    <test name="Post Tests">
         <classes>
-            <class name="com.piyushsinghal.api.tests.AuthenticationTest"/>
+            <class name="com.piyushsinghal.api.tests.CreatePostTest"/>
+            <class name="com.piyushsinghal.api.tests.UpdateDeletePostTest"/>
         </classes>
     </test>
 

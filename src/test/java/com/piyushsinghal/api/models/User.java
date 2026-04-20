@@ -8,10 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * User POJO - represents a user in the ReqRes API.
+ * User POJO - represents a user in the JSONPlaceholder API.
  *
- * Using Lombok (@Data, @Builder) to avoid 50 lines of getters/setters boilerplate.
- * @JsonInclude.NON_NULL ensures null fields aren't serialized (cleaner payloads).
+ * Using Lombok to avoid getter/setter boilerplate.
  */
 @Data
 @Builder
@@ -21,12 +20,9 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
     private Integer id;
+    private String name;
+    private String username;
     private String email;
-    private String first_name;
-    private String last_name;
-    private String avatar;
-    private String name;     // Used by POST /users endpoint
-    private String job;      // Used by POST /users endpoint
-    private String createdAt;
-    private String updatedAt;
+    private String phone;
+    private String website;
 }
