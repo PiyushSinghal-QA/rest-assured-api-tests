@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
-  # Daily smoke run at 3 AM UTC
   schedule:
     - cron: '0 3 * * *'
 
@@ -39,6 +38,7 @@ jobs:
           name: surefire-reports
           path: target/surefire-reports/
           retention-days: 30
+          if-no-files-found: warn
 
       - name: Upload Allure results
         if: always()
@@ -47,19 +47,4 @@ jobs:
           name: allure-results
           path: target/allure-results/
           retention-days: 30
-
-      - name: Generate Allure report
-        if: always()
-        uses: simple-elf/allure-report-action@v1.9
-        with:
-          allure_results: target/allure-results
-          allure_history: allure-history
-
-      - name: Publish test summary
-        if: always()
-        uses: dorny/test-reporter@v1
-        with:
-          name: TestNG Results
-          path: target/surefire-reports/TEST-*.xml
-          reporter: java-junit
-          fail-on-error: false
+          if-no-files-found: warn
